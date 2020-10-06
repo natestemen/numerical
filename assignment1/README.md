@@ -15,17 +15,17 @@
  - [ ] Ratio of compute times for N and N/2.
 
 # Problem 3 (2D model problem)
- - [ ] `build_laplace` function
- - [ ] `laplace_zeroBC.py`
- - [ ] test with N = 32 and make mesh plots
- - [ ] `laplace_heat.py`
- - [ ] test with N = 64 and make mesh/contour plots
+ - [x] `build_laplace` function
+ - [x] `laplace_zeroBC.py`
+ - [x] test with N = 32 and make mesh plots
+ - [x] `laplace_heat.py`
+ - [x] test with N = 64 and make mesh/contour plots
 
 # Problem 4 (Conditioning of linear systems)
- - [ ] Show the conditioning equality
- - [ ] `Matrix_conditioning.py`
- - [ ] A bunch of small questions about conditioning
- - [ ] Compute inverse of B and a bunch of small questions
+ - [x] Show the conditioning equality
+ - [x] `Matrix_conditioning.py`
+ - [x] A bunch of small questions about conditioning
+ - [x] Compute inverse of B and a bunch of small questions
 
 # Problem 5 (Determining the base of a floating point number system)
  - [ ] Download and run matlab file
