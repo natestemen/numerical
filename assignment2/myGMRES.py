@@ -12,7 +12,7 @@ def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
     residuals = []
     iterations = [guess]
     for iteration in range(maxIterations):
-        v = A @ Q[iteration][:2]
+        v = A @ Q[iteration]
         for j in range(iteration):
             H[j, iteration] = np.dot(Q[j], v)
             v -= H[j, iteration] * Q[j]
