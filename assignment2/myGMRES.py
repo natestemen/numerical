@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import sparse
 
 
 def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
@@ -6,29 +7,28 @@ def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
     r0 = b - A @ guess
     rho = np.linalg.norm(r0)
     r0 /= rho
-    Q = [0] * maxIterations
-    Q[0] = r0
-    H = np.zeros((maxIterations + 1, maxIterations))
+    Q = np.zeros((n, maxIterations))
+    Q[:, 0] = r0
+    H = sparse.csr_matrix((maxIterations + 1, maxIterations))
     residuals = []
-    iterations = [guess]
     for iteration in range(maxIterations):
-        v = A @ Q[iteration]
-        for j in range(iteration):
-            H[j, iteration] = np.dot(Q[j], v)
-            v -= H[j, iteration] * Q[j]
-        H[iteration + 1, iteration] = np.linalg.norm(v)
-        Q[iteration + 1] = v / H[iteration + 1, iteration]
+        v = A @ Q[:, iteration]
+        for j in range(iteration + 1):
+            H[j, iteration] = np.dot(Q[:, j], v)
+            v -= H[j, iteration] * Q[:, j]
+        norm_v = np.linalg.norm(v)
+        H[iteration + 1, iteration] = norm_v
+        Q[:, iteration + 1] = v / norm_v
 
         e = np.zeros(maxIterations + 1)
         e[0] = rho
 
-        y = np.linalg.lstsq(H, e, rcond=None)[0]
+        y, _, _, residual, *_ = sparse.linalg.lsqr(H, e)
+        residual /= rho
 
-        x = guess + np.asarray(Q).T @ y
-
-        residual = np.linalg.norm(e - H @ y)
         residuals.append(residual)
         if residual < tolerance:
+            x = guess + Q @ y
             break
 
-    return x, residuals, iteration
+    return x, residuals, iteration + 1
