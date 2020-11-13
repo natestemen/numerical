@@ -1,11 +1,13 @@
 import numpy as np
+from scipy import sparse
 
 
 def myGMRES_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
     n = A.shape[0]
+    maxIterations = min(n, maxIterations)
     omega = 1.9
-    AL = sparse.tril(A, k=-1)
-    AU = sparse.triu(A, k=1)
+    AL = -1 * sparse.tril(A, k=-1)
+    AU = -1 * sparse.triu(A, k=1)
     AD = sparse.spdiags(A.diagonal(), [0], n, n)
     ADinv = sparse.spdiags([1 / x for x in A.diagonal()], [0], n, n)
     Pinv = (AD - omega * AL) @ ADinv @ (AD - omega * AU) / (omega * (2 - omega))
@@ -31,11 +33,11 @@ def myGMRES_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
 
         e = np.zeros(maxIterations + 1)
         e[0] = rho
-        y, _, _, residual, *_ = sparse.linalg.lsqr(H, e)
+        y, _, _, residual, *_ = sparse.linalg.lsqr(H, e, atol=tolerance, btol=tolerance)
         residual /= rho
         residuals.append(residual)
 
-        if residual < tolerance:
+        if residual < tolerance or iteration == n - 1:
             w = sparse.linalg.spsolve(Pinv, Q @ y)
             x = guess + w
             break
