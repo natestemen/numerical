@@ -13,6 +13,6 @@ def GaussSeidel(A, guess, b, tolerance, maxIterations):
         if np.linalg.norm(x_new - x_old) < tolerance:
             break
         x_old = x_new
-    if iteration == maxIterations:
+    if iteration == maxIterations - 1:
         print("HIT MAX ITERATION: ", maxIterations)
     return x_new
