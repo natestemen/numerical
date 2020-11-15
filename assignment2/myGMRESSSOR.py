@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import sparse
+from scipy import sparse, linalg
 
 
 def myGMRES_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
@@ -33,8 +33,8 @@ def myGMRES_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
 
         e = np.zeros(maxIterations + 1)
         e[0] = rho
-        y, _, _, residual, *_ = sparse.linalg.lsqr(H, e, atol=tolerance, btol=tolerance)
-        residual /= rho
+        y, *_ = linalg.lstsq(H.toarray(), e)
+        residual = np.linalg.norm(e - H @ y) / rho
         residuals.append(residual)
 
         if residual < tolerance or iteration == n - 1:

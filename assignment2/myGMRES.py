@@ -1,6 +1,5 @@
 import numpy as np
-from scipy import sparse
-from scipy.sparse import linalg
+from scipy import sparse, linalg
 
 
 def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
@@ -8,9 +7,8 @@ def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
     maxIterations = min(n, maxIterations)
     r0 = b - A @ guess
     rho = np.linalg.norm(r0)
-    r0 /= rho
     Q = np.zeros((n, maxIterations))
-    Q[:, 0] = r0
+    Q[:, 0] = r0 / rho
     H = sparse.lil_matrix((maxIterations + 1, maxIterations))
     residuals = []
     for iteration in range(maxIterations):
@@ -25,8 +23,8 @@ def myGMRES(A, guess, b, tolerance=1e-12, maxIterations=1000):
         e = np.zeros(maxIterations + 1)
         e[0] = rho
 
-        y, _, _, residual, *_ = linalg.lsqr(H, e, atol=tolerance, btol=tolerance)
-        residual /= rho
+        y, *_ = linalg.lstsq(H.toarray(), e)
+        residual = np.linalg.norm(e - H @ y) / rho
 
         residuals.append(residual)
         if residual < tolerance or iteration == maxIterations - 1:
