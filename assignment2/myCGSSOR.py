@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import sparse
+from scipy.sparse import linalg
 
 
 def myCG_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
@@ -19,7 +20,7 @@ def myCG_SSOR(A, guess, b, tolerance=1e-12, maxIterations=1000):
     Xvecs[:, 0] = guess
 
     r0 = b - A @ guess
-    q0 = sparse.linalg.spsolve(Pinv, r0)
+    q0 = linalg.spsolve(Pinv, r0)
     p0 = np.copy(q0)
     Rvecs[:, 0], Qvecs[:, 0], Pvecs[:, 0] = r0, q0, p0
 
